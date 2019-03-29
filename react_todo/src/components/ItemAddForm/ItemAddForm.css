@@ -1,3 +1,11 @@
 .item-add-form {
     margin: 10px 0;
 }
+
+.item-add-form .form-control {
+    margin-right: 3px;
+}
+
+.btn {
+    white-space: nowrap;
+}
