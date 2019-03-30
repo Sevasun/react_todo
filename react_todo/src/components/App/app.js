@@ -19,8 +19,7 @@ export default class App extends React.Component {
                 this.createTodoItem('Learn React'),
                 this.createTodoItem('Drunk')
             ],
-            currentState: [],
-            filterData: []
+            term: ''
         };
     };
 
@@ -49,13 +48,27 @@ export default class App extends React.Component {
     addItem = (text) => {
         const newItem = this.createTodoItem(text);
 
-        this.setState(({ todoData }) => {
-            const newData = [...todoData, newItem];
+        if(text) {
+            this.setState(({ todoData }) => {
+                const newData = [...todoData, newItem];
+    
+                return {
+                    todoData: newData
+                }
+            });
+        };
+    };
 
-            return {
-                todoData: newData
-            }
-        })
+    filterSearch = (items, term) => {
+        if(term === '') {
+            return items;
+        }
+
+        const newData = items.filter((el) => {
+            return el.label.toLowerCase().indexOf(term.toLowerCase()) > -1;
+        });
+
+        return newData;
     };
 
     onToggleProperty = (id, propName = 'done') => {
@@ -78,20 +91,20 @@ export default class App extends React.Component {
     };
 
     onSearch = (value) => {
-        console.log(value);
-    }
+        this.setState({ 
+            term: value
+        });
+    };
+
+    onFilterStatus = (propName) => {
+        console.log(propName);
+    };
     
     render() {
-
         const doneCount = this.state.todoData.filter((el) => el.done).length;
         const todoCount = this.state.todoData.length - doneCount;
 
-        // this.setState(({ currentState, todoData }) => {
-        //     currentState: [...todoData]
-        //     return {
-        //         currentState: [...todoData]
-        //     }
-        // });
+        const visibleItems = this.filterSearch(this.state.todoData, this.state.term);
 
         return (
             <div className="todo-app">
@@ -99,10 +112,11 @@ export default class App extends React.Component {
                 <div className="top-panel d-flex">
                     <SearchPanel 
                         onSearch={ this.onSearch } />
-                    <ItemStatusFilter />
+                    <ItemStatusFilter
+                        onFilterStatus={ this.onFilterStatus } />
                 </div>
                 <TodoList 
-                    todos={this.state.todoData}
+                    todos={visibleItems}
                     onToggleProperty={ this.onToggleProperty }
                     onDeleted={ this.deleteItem } />
                 <ItemAddForm 
