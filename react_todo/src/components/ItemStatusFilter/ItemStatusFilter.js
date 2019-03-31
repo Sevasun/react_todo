@@ -7,7 +7,7 @@ export default class ItemStatusFilter extends Component {
 		const { onFilterStatus, buttons, currentRule } = this.props;
 
 		const btn = buttons.map((item) => {
-			const { text, rule, id } = item;
+			const { text, rule } = item;
 			let classNames = 'btn ';
 
 			if(rule === currentRule) {
@@ -18,7 +18,7 @@ export default class ItemStatusFilter extends Component {
 
 			return (
 				<button
-					key={id}
+					key={rule}
 					className={ classNames }
 					onClick={ onFilterStatus.bind(null, rule) }>
 					{text}

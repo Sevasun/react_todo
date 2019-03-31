@@ -12,7 +12,6 @@ export default class App extends React.Component {
         super();
 
         this.maxId = 100;
-        this.btnId = 1;
 
         this.state = {
             todoData: [
@@ -69,8 +68,7 @@ export default class App extends React.Component {
     createFilterButton(text, rule) {
         return {
             text,
-            rule,
-            id: this.btnId++
+            rule
         }
     }
 
@@ -118,20 +116,14 @@ export default class App extends React.Component {
     };
 
     filterSwitch = (propName, list) => {
-        let newList;
-
         switch (propName) {
             case 'active':
-                newList = list.filter((el) => !el.done);
-                break;
+                return list.filter((el) => !el.done);
             case 'done':
-                newList = list.filter((el) => el.done);
-                break;
+                return list.filter((el) => el.done);
             default:
-            newList = list;
-                break;
+                return list;
         };
-        return newList;
     }
     
     render() {
@@ -140,8 +132,7 @@ export default class App extends React.Component {
         const doneCount = todoData.filter((el) => el.done).length;
         const todoCount = todoData.length - doneCount;
 
-        let visibleItems = this.filterSearch(todoData, term);
-        visibleItems = this.filterSwitch.call(this, filterRule, visibleItems);
+        let visibleItems = this.filterSwitch(filterRule, this.filterSearch(todoData, term));
 
         return (
             <div className="todo-app">
