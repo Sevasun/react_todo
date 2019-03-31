@@ -12,6 +12,7 @@ export default class App extends React.Component {
         super();
 
         this.maxId = 100;
+        this.btnId = 1;
 
         this.state = {
             todoData: [
@@ -19,7 +20,13 @@ export default class App extends React.Component {
                 this.createTodoItem('Learn React'),
                 this.createTodoItem('Drunk')
             ],
-            term: ''
+            filterButtons: [
+                this.createFilterButton('All', 'all'),
+                this.createFilterButton('Active', 'active'),
+                this.createFilterButton('Done', 'done')
+            ],
+            term: '',
+            filterRule: 'all'
         };
     };
 
@@ -59,6 +66,14 @@ export default class App extends React.Component {
         };
     };
 
+    createFilterButton(text, rule) {
+        return {
+            text,
+            rule,
+            id: this.btnId++
+        }
+    }
+
     filterSearch = (items, term) => {
         if(term === '') {
             return items;
@@ -97,14 +112,36 @@ export default class App extends React.Component {
     };
 
     onFilterStatus = (propName) => {
-        console.log(propName);
+        this.setState({
+            filterRule: propName
+        });
     };
+
+    filterSwitch = (propName, list) => {
+        let newList;
+
+        switch (propName) {
+            case 'active':
+                newList = list.filter((el) => !el.done);
+                break;
+            case 'done':
+                newList = list.filter((el) => el.done);
+                break;
+            default:
+            newList = list;
+                break;
+        };
+        return newList;
+    }
     
     render() {
-        const doneCount = this.state.todoData.filter((el) => el.done).length;
-        const todoCount = this.state.todoData.length - doneCount;
+        const { todoData, term, filterRule, filterButtons } = this.state;
 
-        const visibleItems = this.filterSearch(this.state.todoData, this.state.term);
+        const doneCount = todoData.filter((el) => el.done).length;
+        const todoCount = todoData.length - doneCount;
+
+        let visibleItems = this.filterSearch(todoData, term);
+        visibleItems = this.filterSwitch.call(this, filterRule, visibleItems);
 
         return (
             <div className="todo-app">
@@ -113,6 +150,8 @@ export default class App extends React.Component {
                     <SearchPanel 
                         onSearch={ this.onSearch } />
                     <ItemStatusFilter
+                        currentRule={ filterRule }
+                        buttons={ filterButtons }
                         onFilterStatus={ this.onFilterStatus } />
                 </div>
                 <TodoList 

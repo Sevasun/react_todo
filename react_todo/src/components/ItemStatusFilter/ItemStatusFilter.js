@@ -4,25 +4,31 @@ import './ItemStatusFilter.css';
 
 export default class ItemStatusFilter extends Component {
 	render() {
-		const { onFilterStatus } = this.props;
+		const { onFilterStatus, buttons, currentRule } = this.props;
+
+		const btn = buttons.map((item) => {
+			const { text, rule, id } = item;
+			let classNames = 'btn ';
+
+			if(rule === currentRule) {
+				classNames += "btn-info";
+			} else {
+				classNames += "btn-outline-secondary";
+			}
+
+			return (
+				<button
+					key={id}
+					className={ classNames }
+					onClick={ onFilterStatus.bind(null, rule) }>
+					{text}
+				</button>
+			);
+		});
 
 		return ( 
 			<div className="btn-group" >
-				<button type="button"
-					onClick={ onFilterStatus.bind(null, 'all') }
-					className="btn btn-info" > 
-					All 
-				</button>
-				<button type="button"
-					onClick={ onFilterStatus.bind(null, 'active') }
-					className="btn btn-outline-secondary" >
-					Active
-				</button>
-				<button type="button"
-					onClick={ onFilterStatus.bind(null, 'done') }
-					className="btn btn-outline-secondary" >
-					Done
-				</button>
+				{ btn }
 			</div>
 		);
 	}
